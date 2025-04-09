@@ -89,11 +89,11 @@ const SearchForm: React.FC<SearchFormProps> = ({
         <div className="relative">
           <Input
             id="destination"
-            placeholder="Search for a city or country"
+            placeholder="Search for a city, state or country"
             value={destinationQuery}
             onChange={handleDestinationChange}
             className="w-full"
-            disabled={selectedDestination !== null}
+            disabled={selectedDestination !== null && !localSelectedDestination}
           />
           
           {showDestinations && filteredDestinations.length > 0 && (

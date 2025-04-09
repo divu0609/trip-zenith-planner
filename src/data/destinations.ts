@@ -56,5 +56,46 @@ export const destinations: Destination[] = [
     description: "Stunning coastal city with iconic Table Mountain and diverse cultural experiences.",
     imageUrl: "https://images.unsplash.com/photo-1576485375220-158530450f5e?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3",
     popular: false
+  },
+  {
+    id: "7",
+    name: "Delhi",
+    country: "India",
+    description: "Historic capital city with a blend of ancient monuments and bustling metropolitan life.",
+    imageUrl: "https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    popular: true
+  },
+  {
+    id: "8",
+    name: "Mumbai",
+    country: "India",
+    description: "India's financial center and entertainment capital with vibrant culture and colonial architecture.",
+    imageUrl: "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3",
+    popular: true
+  },
+  {
+    id: "9",
+    name: "Goa",
+    country: "India",
+    description: "Popular beach destination with a unique blend of Indian and Portuguese cultures.",
+    imageUrl: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.0.3", 
+    popular: true
+  },
+  {
+    id: "10",
+    name: "Jaipur",
+    country: "India", 
+    description: "The 'Pink City' known for its stunning palaces, forts, and vibrant cultural heritage.",
+    imageUrl: "https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    popular: false
+  },
+  {
+    id: "11", 
+    name: "Kolkata",
+    country: "India",
+    description: "Cultural capital with colonial-era architecture, art galleries, and literary heritage.",
+    imageUrl: "https://images.unsplash.com/photo-1558431382-27e303142255?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3",
+    popular: false
   }
 ];
+
