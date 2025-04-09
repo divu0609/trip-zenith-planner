@@ -26,6 +26,15 @@ const SearchForm: React.FC<SearchFormProps> = ({
   const [duration, setDuration] = useState(3);
   const [filteredDestinations, setFilteredDestinations] = useState<Destination[]>([]);
   const [showDestinations, setShowDestinations] = useState(false);
+  const [localSelectedDestination, setLocalSelectedDestination] = useState<Destination | null>(selectedDestination);
+
+  // Update local state when prop changes
+  React.useEffect(() => {
+    if (selectedDestination) {
+      setLocalSelectedDestination(selectedDestination);
+      setDestinationQuery(`${selectedDestination.name}, ${selectedDestination.country}`);
+    }
+  }, [selectedDestination]);
 
   const handleDestinationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
@@ -45,6 +54,7 @@ const SearchForm: React.FC<SearchFormProps> = ({
 
   const handleDestinationSelect = (destination: Destination) => {
     setDestinationQuery(`${destination.name}, ${destination.country}`);
+    setLocalSelectedDestination(destination);
     setShowDestinations(false);
   };
 
@@ -62,9 +72,14 @@ const SearchForm: React.FC<SearchFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedDestination) return;
+    if (!localSelectedDestination) return;
     
-    onSearch(selectedDestination.id, selectedInterests, duration);
+    onSearch(localSelectedDestination.id, selectedInterests, duration);
+  };
+
+  const clearDestination = () => {
+    setLocalSelectedDestination(null);
+    setDestinationQuery("");
   };
 
   return (
@@ -111,10 +126,23 @@ const SearchForm: React.FC<SearchFormProps> = ({
       <Button 
         type="submit" 
         className="w-full bg-travel-blue hover:bg-travel-teal"
-        disabled={!selectedDestination}
+        disabled={!localSelectedDestination}
       >
         Create My Itinerary
       </Button>
+
+      {localSelectedDestination && (
+        <div className="text-center">
+          <Button
+            type="button"
+            variant="link"
+            className="text-travel-coral"
+            onClick={clearDestination}
+          >
+            Change Destination
+          </Button>
+        </div>
+      )}
     </form>
   );
 };

@@ -5,8 +5,6 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import DestinationCard from "@/components/DestinationCard";
 import SearchForm from "@/components/SearchForm";
-import InterestSelector from "@/components/InterestSelector";
-import TripDurationSelector from "@/components/TripDurationSelector";
 import ItineraryDisplay from "@/components/ItineraryDisplay";
 import { destinations } from "@/data/destinations";
 import { interests } from "@/data/interests";
@@ -26,6 +24,11 @@ const Index = () => {
   };
 
   const handleSearch = (destinationId: string, interestIds: string[], duration: number) => {
+    // Find the selected destination to display its name in the itinerary
+    const destination = destinations.find(d => d.id === destinationId);
+    if (!destination) return;
+    
+    // Generate the itinerary
     const itinerary = generateItinerary(destinationId, interestIds, duration);
     setGeneratedItinerary(itinerary);
     
