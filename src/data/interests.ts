@@ -56,4 +56,14 @@ export const interests: Interest[] = [
     name: "Relaxation",
     icon: "🧘"
   },
+  {
+    id: "11",
+    name: "Photography",
+    icon: "📸"
+  },
+  {
+    id: "12",
+    name: "Local Culture",
+    icon: "🎭"
+  }
 ];
