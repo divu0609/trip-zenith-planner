@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,15 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+        // Travel-themed colors
+        travel: {
+          blue: '#0891b2', // Teal blue for oceans
+          teal: '#14b8a6', // Vibrant teal
+          coral: '#f97316', // Coral accent
+          sand: '#fef3c7', // Light sand
+          navy: '#0f172a', // Deep navy
+        }
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
