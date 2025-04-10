@@ -6,6 +6,7 @@ export interface Destination {
   description: string;
   imageUrl: string;
   popular: boolean;
+  interests?: string[]; // Associated interests for this destination
 }
 
 export const destinations: Destination[] = [
@@ -15,7 +16,8 @@ export const destinations: Destination[] = [
     country: "Indonesia",
     description: "Tropical paradise with stunning beaches, lush rice terraces, and spiritual temples.",
     imageUrl: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=1938&auto=format&fit=crop&ixlib=rb-4.0.3",
-    popular: true
+    popular: true,
+    interests: ["1", "3", "7", "10", "12"] // Beaches, History, Adventure, Relaxation, Local Culture
   },
   {
     id: "2",
@@ -23,7 +25,8 @@ export const destinations: Destination[] = [
     country: "France",
     description: "City of love, art, and culture with iconic landmarks and world-class cuisine.",
     imageUrl: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop&ixlib=rb-4.0.3",
-    popular: true
+    popular: true,
+    interests: ["3", "4", "5", "8", "12"] // History, Food, Art, Shopping, Local Culture
   },
   {
     id: "3",
@@ -31,7 +34,8 @@ export const destinations: Destination[] = [
     country: "Japan",
     description: "Ultramodern metropolis blending traditional culture with futuristic technology.",
     imageUrl: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3",
-    popular: true
+    popular: true,
+    interests: ["4", "5", "6", "8", "12"] // Food, Art, Nightlife, Shopping, Local Culture
   },
   {
     id: "4",
@@ -39,7 +43,8 @@ export const destinations: Destination[] = [
     country: "United States",
     description: "The city that never sleeps, featuring towering skyscrapers and diverse cultures.",
     imageUrl: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    popular: true
+    popular: true,
+    interests: ["5", "6", "8", "11"] // Art, Nightlife, Shopping, Photography
   },
   {
     id: "5",
@@ -47,7 +52,8 @@ export const destinations: Destination[] = [
     country: "Italy",
     description: "Ancient ruins, Renaissance art, and vibrant street life in the Eternal City.",
     imageUrl: "https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    popular: false
+    popular: false,
+    interests: ["3", "4", "5", "11", "12"] // History, Food, Art, Photography, Local Culture
   },
   {
     id: "6",
@@ -55,7 +61,8 @@ export const destinations: Destination[] = [
     country: "South Africa",
     description: "Stunning coastal city with iconic Table Mountain and diverse cultural experiences.",
     imageUrl: "https://images.unsplash.com/photo-1576485375220-158530450f5e?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3",
-    popular: false
+    popular: false,
+    interests: ["1", "2", "7", "9", "11"] // Beaches, Mountains, Adventure, Wildlife, Photography
   },
   {
     id: "7",
@@ -63,7 +70,8 @@ export const destinations: Destination[] = [
     country: "India",
     description: "Historic capital city with a blend of ancient monuments and bustling metropolitan life.",
     imageUrl: "https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    popular: true
+    popular: true,
+    interests: ["3", "4", "5", "12"] // History, Food, Art, Local Culture
   },
   {
     id: "8",
@@ -71,7 +79,8 @@ export const destinations: Destination[] = [
     country: "India",
     description: "India's financial center and entertainment capital with vibrant culture and colonial architecture.",
     imageUrl: "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3",
-    popular: true
+    popular: true,
+    interests: ["3", "4", "6", "8", "12"] // History, Food, Nightlife, Shopping, Local Culture
   },
   {
     id: "9",
@@ -79,7 +88,8 @@ export const destinations: Destination[] = [
     country: "India",
     description: "Popular beach destination with a unique blend of Indian and Portuguese cultures.",
     imageUrl: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.0.3", 
-    popular: true
+    popular: true,
+    interests: ["1", "6", "7", "10", "12"] // Beaches, Nightlife, Adventure, Relaxation, Local Culture
   },
   {
     id: "10",
@@ -87,7 +97,8 @@ export const destinations: Destination[] = [
     country: "India", 
     description: "The 'Pink City' known for its stunning palaces, forts, and vibrant cultural heritage.",
     imageUrl: "https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    popular: false
+    popular: false,
+    interests: ["3", "5", "11", "12"] // History, Art, Photography, Local Culture
   },
   {
     id: "11", 
@@ -95,7 +106,7 @@ export const destinations: Destination[] = [
     country: "India",
     description: "Cultural capital with colonial-era architecture, art galleries, and literary heritage.",
     imageUrl: "https://images.unsplash.com/photo-1558431382-27e303142255?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3",
-    popular: false
+    popular: false,
+    interests: ["3", "4", "5", "12"] // History, Food, Art, Local Culture
   }
 ];
-

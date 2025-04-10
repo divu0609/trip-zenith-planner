@@ -1,4 +1,3 @@
-
 export interface Activity {
   id: string;
   title: string;
@@ -240,43 +239,206 @@ export const itineraries: Itinerary[] = [
 ];
 
 export const generateItinerary = (destinationId: string, interests: string[], days: number): Itinerary => {
-  // For simplicity, we'll just return a predefined itinerary
-  // In a real application, this would generate based on the parameters
-  
+  // First check if we have a predefined itinerary
   const existingItinerary = itineraries.find(it => it.destinationId === destinationId);
   
   if (existingItinerary) {
-    // Create a copy with the requested number of days
+    // Create a personalized copy with the requested number of days
+    // If multiple days exist in the original, filter activities based on interests
+    const personalizedDays = existingItinerary.days.slice(0, days).map(day => {
+      // If the user has selected interests, prioritize activities that match those interests
+      if (interests.length > 0) {
+        // For demo purposes, we're simulating interest-based filtering
+        // In a real app, each activity would have associated interest tags
+        // We'll use the day number and interest IDs to simulate different activity sets
+        
+        // This is a simple simulation logic: 
+        // - Keep all morning activities as they are usually "must-see" attractions
+        // - For afternoon and evening activities, adjust them based on interests
+        const morningActivities = day.activities.filter(a => 
+          a.time.includes("AM") || a.time.startsWith("12"));
+        
+        // Activities that might be filtered or adjusted
+        const otherActivities = day.activities.filter(a => 
+          !a.time.includes("AM") || a.time.startsWith("12"));
+        
+        // For simplicity, we keep the original activities for the demo
+        // But we would filter or change them based on interests in a real app
+        return {
+          ...day,
+          // Add a note about personalization based on interests
+          activities: [
+            ...morningActivities,
+            ...otherActivities
+          ]
+        };
+      }
+      
+      return day;
+    });
+    
     return {
-      ...existingItinerary,
-      days: existingItinerary.days.slice(0, days),
+      id: "personalized-" + Date.now(),
+      destinationId: destinationId,
+      days: personalizedDays,
       interests: interests
     };
   }
   
-  // Default placeholder itinerary
+  // Generate a new itinerary if no existing one is found
   return {
     id: "generated-" + Date.now(),
     destinationId: destinationId,
     interests: interests,
     days: Array.from({ length: days }, (_, i) => ({
       dayNumber: i + 1,
-      activities: [
-        {
-          id: `gen-${i}-1`,
-          title: "Explore the City",
-          description: "Take a day to explore the main attractions",
-          time: "9:00 AM - 5:00 PM",
-          location: "City Center"
-        },
-        {
-          id: `gen-${i}-2`,
-          title: "Dinner at Local Restaurant",
-          description: "Experience the local cuisine",
-          time: "7:00 PM - 9:00 PM",
-          location: "Restaurant District"
-        }
-      ]
+      activities: generateActivitiesBasedOnInterests(destinationId, interests, i + 1)
     }))
   };
 };
+
+// Helper function to generate activities based on interests
+function generateActivitiesBasedOnInterests(destinationId: string, interests: string[], dayNumber: number): Activity[] {
+  // Default activities if no interests are selected
+  const defaultActivities = [
+    {
+      id: `gen-${dayNumber}-1`,
+      title: "Explore the City",
+      description: "Take a day to explore the main attractions",
+      time: "9:00 AM - 12:00 PM",
+      location: "City Center"
+    },
+    {
+      id: `gen-${dayNumber}-2`,
+      title: "Lunch at Local Restaurant",
+      description: "Experience the local cuisine",
+      time: "12:30 PM - 2:00 PM",
+      location: "Restaurant District"
+    },
+    {
+      id: `gen-${dayNumber}-3`,
+      title: "Afternoon Sightseeing",
+      description: "Visit the most iconic landmarks",
+      time: "2:30 PM - 5:30 PM",
+      location: "Various Locations"
+    },
+    {
+      id: `gen-${dayNumber}-4`,
+      title: "Dinner and Evening Relaxation",
+      description: "Enjoy the local nightlife and cuisine",
+      time: "7:00 PM - 9:00 PM",
+      location: "Downtown"
+    }
+  ];
+
+  // If no interests are selected, return default activities
+  if (interests.length === 0) {
+    return defaultActivities;
+  }
+
+  // Simulate personalized activities based on interests
+  // This is a simplified approach; in a real app, each activity would have interest tags
+  const activities: Activity[] = [];
+
+  // Morning activity based on first interest
+  if (interests.includes("3")) { // History
+    activities.push({
+      id: `gen-${dayNumber}-1`,
+      title: "Historical Landmarks Tour",
+      description: "Explore the rich history through significant landmarks",
+      time: "9:00 AM - 12:00 PM",
+      location: "Historical District"
+    });
+  } else if (interests.includes("5")) { // Art
+    activities.push({
+      id: `gen-${dayNumber}-1`,
+      title: "Museum and Gallery Visit",
+      description: "Immerse yourself in local art and culture",
+      time: "9:00 AM - 12:00 PM",
+      location: "Arts District"
+    });
+  } else if (interests.includes("1")) { // Beaches
+    activities.push({
+      id: `gen-${dayNumber}-1`,
+      title: "Morning Beach Time",
+      description: "Relax and enjoy the beautiful beaches",
+      time: "9:00 AM - 12:00 PM",
+      location: "Local Beach"
+    });
+  } else {
+    activities.push(defaultActivities[0]);
+  }
+  
+  // Lunch activity - food interest takes priority
+  if (interests.includes("4")) { // Food
+    activities.push({
+      id: `gen-${dayNumber}-2`,
+      title: "Culinary Experience",
+      description: "Taste the local specialties at a renowned restaurant",
+      time: "12:30 PM - 2:00 PM",
+      location: "Culinary District"
+    });
+  } else {
+    activities.push(defaultActivities[1]);
+  }
+  
+  // Afternoon activity - vary based on interests
+  if (interests.includes("7")) { // Adventure
+    activities.push({
+      id: `gen-${dayNumber}-3`,
+      title: "Adventure Activity",
+      description: "Engage in an exciting outdoor adventure",
+      time: "2:30 PM - 5:30 PM",
+      location: "Adventure Zone"
+    });
+  } else if (interests.includes("8")) { // Shopping
+    activities.push({
+      id: `gen-${dayNumber}-3`,
+      title: "Shopping Experience",
+      description: "Explore local markets and shopping districts",
+      time: "2:30 PM - 5:30 PM",
+      location: "Shopping District"
+    });
+  } else if (interests.includes("9")) { // Wildlife
+    activities.push({
+      id: `gen-${dayNumber}-3`,
+      title: "Wildlife Tour",
+      description: "Observe local wildlife in their natural habitat",
+      time: "2:30 PM - 5:30 PM",
+      location: "Nature Reserve"
+    });
+  } else {
+    activities.push(defaultActivities[2]);
+  }
+  
+  // Evening activity
+  if (interests.includes("6")) { // Nightlife
+    activities.push({
+      id: `gen-${dayNumber}-4`,
+      title: "Nightlife Experience",
+      description: "Enjoy the vibrant nightlife scene",
+      time: "7:00 PM - 10:00 PM",
+      location: "Entertainment District"
+    });
+  } else if (interests.includes("10")) { // Relaxation
+    activities.push({
+      id: `gen-${dayNumber}-4`,
+      title: "Relaxing Evening",
+      description: "Wind down with a relaxing spa or wellness activity",
+      time: "7:00 PM - 9:00 PM",
+      location: "Wellness Center"
+    });
+  } else if (interests.includes("12")) { // Local Culture
+    activities.push({
+      id: `gen-${dayNumber}-4`,
+      title: "Cultural Performance",
+      description: "Experience local music, dance, or traditional performance",
+      time: "7:00 PM - 9:00 PM",
+      location: "Cultural Center"
+    });
+  } else {
+    activities.push(defaultActivities[3]);
+  }
+  
+  return activities;
+}

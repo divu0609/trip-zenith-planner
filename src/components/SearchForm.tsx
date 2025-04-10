@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +13,7 @@ interface SearchFormProps {
   interests: Interest[];
   selectedDestination: Destination | null;
   onSearch: (destinationId: string, interestIds: string[], duration: number) => void;
+  onInterestChange?: (interestIds: string[]) => void;
 }
 
 const SearchForm: React.FC<SearchFormProps> = ({
@@ -20,6 +21,7 @@ const SearchForm: React.FC<SearchFormProps> = ({
   interests,
   selectedDestination,
   onSearch,
+  onInterestChange,
 }) => {
   const [destinationQuery, setDestinationQuery] = useState("");
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
@@ -29,12 +31,19 @@ const SearchForm: React.FC<SearchFormProps> = ({
   const [localSelectedDestination, setLocalSelectedDestination] = useState<Destination | null>(selectedDestination);
 
   // Update local state when prop changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (selectedDestination) {
       setLocalSelectedDestination(selectedDestination);
       setDestinationQuery(`${selectedDestination.name}, ${selectedDestination.country}`);
     }
   }, [selectedDestination]);
+
+  // Notify parent component about interest changes
+  useEffect(() => {
+    if (onInterestChange) {
+      onInterestChange(selectedInterests);
+    }
+  }, [selectedInterests, onInterestChange]);
 
   const handleDestinationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
@@ -59,11 +68,11 @@ const SearchForm: React.FC<SearchFormProps> = ({
   };
 
   const handleInterestToggle = (interestId: string) => {
-    setSelectedInterests((prev) =>
-      prev.includes(interestId)
-        ? prev.filter((id) => id !== interestId)
-        : [...prev, interestId]
-    );
+    const updatedInterests = selectedInterests.includes(interestId)
+      ? selectedInterests.filter((id) => id !== interestId)
+      : [...selectedInterests, interestId];
+    
+    setSelectedInterests(updatedInterests);
   };
 
   const handleDurationChange = (newDuration: number) => {

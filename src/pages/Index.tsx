@@ -1,17 +1,19 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import DestinationCard from "@/components/DestinationCard";
 import SearchForm from "@/components/SearchForm";
 import ItineraryDisplay from "@/components/ItineraryDisplay";
+import DestinationRecommender from "@/components/DestinationRecommender";
 import { destinations } from "@/data/destinations";
 import { interests } from "@/data/interests";
 import { generateItinerary, Itinerary } from "@/data/itineraries";
 
 const Index = () => {
   const [selectedDestination, setSelectedDestination] = useState<typeof destinations[0] | null>(null);
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [generatedItinerary, setGeneratedItinerary] = useState<Itinerary | null>(null);
 
   const handleDestinationSelect = (destination: typeof destinations[0]) => {
@@ -21,6 +23,10 @@ const Index = () => {
     if (plannerSection) {
       plannerSection.scrollIntoView({ behavior: "smooth" });
     }
+  };
+
+  const handleInterestChange = (interestIds: string[]) => {
+    setSelectedInterests(interestIds);
   };
 
   const handleSearch = (destinationId: string, interestIds: string[], duration: number) => {
@@ -77,7 +83,7 @@ const Index = () => {
             Popular Destinations
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {popularDestinations.map((destination) => (
+            {popularDestinations.slice(0, 4).map((destination) => (
               <DestinationCard
                 key={destination.id}
                 destination={destination}
@@ -115,6 +121,7 @@ const Index = () => {
                 interests={interests}
                 selectedDestination={selectedDestination}
                 onSearch={handleSearch}
+                onInterestChange={handleInterestChange}
               />
             </div>
             <div className="lg:col-span-2">
@@ -147,16 +154,18 @@ const Index = () => {
                   </p>
                 </div>
               ) : (
-                <div className="bg-gray-50 p-8 rounded-lg border-2 border-dashed border-gray-300 h-full flex items-center justify-center text-center">
-                  <div>
-                    <h3 className="text-xl font-medium text-gray-600 mb-4">
-                      Select a Destination
-                    </h3>
-                    <p className="text-gray-500 max-w-md mx-auto">
-                      Choose from popular destinations above or search for your dream
-                      destination to get started with your travel planning.
+                <div className="bg-white p-6 rounded-lg shadow-md h-full">
+                  <div className="mb-6">
+                    <h3 className="text-2xl font-bold mb-4">Recommended Destinations</h3>
+                    <p className="text-gray-700 mb-6">
+                      Select your interests to get personalized destination recommendations.
                     </p>
                   </div>
+                  <DestinationRecommender
+                    destinations={destinations}
+                    interests={selectedInterests}
+                    onSelectDestination={handleDestinationSelect}
+                  />
                 </div>
               )}
             </div>
