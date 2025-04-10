@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -75,13 +74,11 @@ const ItineraryDisplay: React.FC<ItineraryDisplayProps> = ({
                   <p className="text-gray-700 mt-2">{activity.description}</p>
                   
                   <div className="mt-4 flex flex-wrap items-center gap-4">
-                    {/* Duration display */}
                     <div className="flex items-center text-sm text-gray-600">
                       <Clock size={14} className="mr-1" />
                       <span>Duration: {activity.duration || '2 hours'}</span>
                     </div>
                     
-                    {/* Optional booking link */}
                     <Button 
                       variant="outline" 
                       size="sm"
@@ -96,7 +93,6 @@ const ItineraryDisplay: React.FC<ItineraryDisplayProps> = ({
               </div>
             </div>
             
-            {/* Travel time to next activity if not the last activity */}
             {index < array.length - 1 && (
               <div className="flex items-center justify-center py-2 px-4 bg-gray-50 rounded-md">
                 <Info size={14} className="text-travel-blue mr-2" />
@@ -111,10 +107,7 @@ const ItineraryDisplay: React.FC<ItineraryDisplayProps> = ({
     );
   };
 
-  // Helper function to simulate travel time between activities
   const getTravelTime = (fromActivity: any, toActivity: any) => {
-    // In a real app, this would calculate based on actual coordinates
-    // For demo purposes, we'll return a random time between 10-40 minutes
     const minutes = Math.floor(Math.random() * 30) + 10;
     return `${minutes} minutes`;
   };
@@ -137,7 +130,7 @@ const ItineraryDisplay: React.FC<ItineraryDisplayProps> = ({
           <div className="space-x-2">
             <Badge className="bg-travel-blue">Daily Schedule</Badge>
             <Badge variant="outline" className="text-travel-teal border-travel-teal">
-              {itinerary.activities?.length || itinerary.days.reduce((acc, day) => acc + day.activities.length, 0)} Activities
+              {itinerary.days.reduce((acc, day) => acc + day.activities.length, 0)} Activities
             </Badge>
           </div>
           <div className="space-x-2">

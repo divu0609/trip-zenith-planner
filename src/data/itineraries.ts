@@ -5,6 +5,7 @@ export interface Activity {
   time: string;
   imageUrl?: string;
   location: string;
+  duration?: string; // Add optional duration property
 }
 
 export interface ItineraryDay {
