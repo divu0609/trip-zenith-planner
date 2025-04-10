@@ -6,19 +6,25 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Itinerary, ItineraryDay } from "@/data/itineraries";
 import { toast } from "sonner";
-import { Clock, Calendar, MapPin, Link as LinkIcon, Info, Ticket } from "lucide-react";
+import { Clock, Calendar, MapPin, Link as LinkIcon, Info, Ticket, DollarSign } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import CostBreakdown from "./CostBreakdown";
+import { TravelCosts } from "@/utils/costEstimator";
 
 interface ItineraryDisplayProps {
   itinerary: Itinerary | null;
   destinationName: string;
   onViewLocalEvents?: () => void;
+  travelCosts?: TravelCosts;
+  duration: number;
 }
 
 const ItineraryDisplay: React.FC<ItineraryDisplayProps> = ({
   itinerary,
   destinationName,
   onViewLocalEvents,
+  travelCosts,
+  duration,
 }) => {
   const [activeDay, setActiveDay] = useState("1");
 
@@ -152,6 +158,13 @@ const ItineraryDisplay: React.FC<ItineraryDisplayProps> = ({
             </Button>
           </div>
         </div>
+        
+        {/* Cost breakdown section */}
+        {travelCosts && (
+          <div className="mb-6">
+            <CostBreakdown costs={travelCosts} duration={duration} />
+          </div>
+        )}
         
         {onViewLocalEvents && (
           <div className="mb-6 p-4 bg-travel-coral bg-opacity-10 rounded-lg flex items-center justify-between">

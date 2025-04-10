@@ -11,12 +11,15 @@ import DestinationRecommender from "@/components/DestinationRecommender";
 import { destinations } from "@/data/destinations";
 import { interests } from "@/data/interests";
 import { generateItinerary, Itinerary } from "@/data/itineraries";
+import { calculateTripCosts, TravelCosts } from "@/utils/costEstimator";
 
 const Index = () => {
   const [selectedDestination, setSelectedDestination] = useState<typeof destinations[0] | null>(null);
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [generatedItinerary, setGeneratedItinerary] = useState<Itinerary | null>(null);
   const [showEvents, setShowEvents] = useState(false);
+  const [tripDuration, setTripDuration] = useState(3);
+  const [tripCosts, setTripCosts] = useState<TravelCosts | null>(null);
 
   const handleDestinationSelect = (destination: typeof destinations[0]) => {
     setSelectedDestination(destination);
@@ -35,6 +38,13 @@ const Index = () => {
     // Find the selected destination to display its name in the itinerary
     const destination = destinations.find(d => d.id === destinationId);
     if (!destination) return;
+    
+    // Store the trip duration
+    setTripDuration(duration);
+    
+    // Generate the cost estimate
+    const costs = calculateTripCosts(destinationId, interestIds, duration);
+    setTripCosts(costs);
     
     // Generate the itinerary
     const itinerary = generateItinerary(destinationId, interestIds, duration);
@@ -197,6 +207,8 @@ const Index = () => {
                 destinations.find(d => d.id === generatedItinerary.destinationId)?.name || ""
               }
               onViewLocalEvents={handleViewEvents}
+              travelCosts={tripCosts || undefined}
+              duration={tripDuration}
             />
           </div>
         </section>

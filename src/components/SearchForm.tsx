@@ -7,6 +7,10 @@ import { Destination } from "@/data/destinations";
 import InterestSelector from "./InterestSelector";
 import TripDurationSelector from "./TripDurationSelector";
 import { Interest } from "@/data/interests";
+import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
+import { Search } from "lucide-react";
 
 interface SearchFormProps {
   destinations: Destination[];
@@ -29,6 +33,9 @@ const SearchForm: React.FC<SearchFormProps> = ({
   const [filteredDestinations, setFilteredDestinations] = useState<Destination[]>([]);
   const [showDestinations, setShowDestinations] = useState(false);
   const [localSelectedDestination, setLocalSelectedDestination] = useState<Destination | null>(selectedDestination);
+  const [isSearching, setIsSearching] = useState(false);
+
+  const form = useForm();
 
   // Update local state when prop changes
   useEffect(() => {
@@ -81,9 +88,20 @@ const SearchForm: React.FC<SearchFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!localSelectedDestination) return;
+    if (!localSelectedDestination) {
+      toast.error("Please select a destination", {
+        description: "Enter a city, state or country to continue",
+      });
+      return;
+    }
     
-    onSearch(localSelectedDestination.id, selectedInterests, duration);
+    setIsSearching(true);
+    
+    // Simulate API call with a slight delay
+    setTimeout(() => {
+      onSearch(localSelectedDestination.id, selectedInterests, duration);
+      setIsSearching(false);
+    }, 1500);
   };
 
   const clearDestination = () => {
@@ -96,14 +114,17 @@ const SearchForm: React.FC<SearchFormProps> = ({
       <div className="space-y-2">
         <Label htmlFor="destination">Destination</Label>
         <div className="relative">
-          <Input
-            id="destination"
-            placeholder="Search for a city, state or country"
-            value={destinationQuery}
-            onChange={handleDestinationChange}
-            className="w-full"
-            disabled={selectedDestination !== null && !localSelectedDestination}
-          />
+          <div className="relative">
+            <Input
+              id="destination"
+              placeholder="Search for a city, state or country"
+              value={destinationQuery}
+              onChange={handleDestinationChange}
+              className="w-full pl-10"
+              disabled={selectedDestination !== null && !localSelectedDestination}
+            />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+          </div>
           
           {showDestinations && filteredDestinations.length > 0 && (
             <div className="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg max-h-60 overflow-auto">
@@ -135,9 +156,9 @@ const SearchForm: React.FC<SearchFormProps> = ({
       <Button 
         type="submit" 
         className="w-full bg-travel-blue hover:bg-travel-teal"
-        disabled={!localSelectedDestination}
+        disabled={!localSelectedDestination || isSearching}
       >
-        Create My Itinerary
+        {isSearching ? "Creating Your Itinerary..." : "Create My Itinerary"}
       </Button>
 
       {localSelectedDestination && (
