@@ -13,6 +13,9 @@ export interface CostRange {
   max: number;
 }
 
+// Currency options
+export type Currency = 'USD' | 'INR' | 'EUR' | 'GBP';
+
 // Base costs per destination tier (USD per day)
 const baseCosts = {
   budget: {
@@ -67,19 +70,29 @@ const interestCostAdjustments: Record<string, number> = {
   "12": 1.1  // Local Culture
 };
 
+// Currency conversion rates (approximate)
+const currencyRates: Record<Currency, number> = {
+  USD: 1,
+  INR: 83.5,  // 1 USD = 83.5 INR (approximate)
+  EUR: 0.93,  // 1 USD = 0.93 EUR (approximate)
+  GBP: 0.79   // 1 USD = 0.79 GBP (approximate)
+};
+
 /**
  * Calculate estimated costs for a trip
  * @param destinationId ID of the destination
  * @param interestIds Array of interest IDs
  * @param duration Trip duration in days
  * @param tier Budget tier (budget, mid, luxury)
+ * @param currency Currency to display costs in
  * @returns Cost estimates
  */
 export const calculateTripCosts = (
   destinationId: string,
   interestIds: string[] = [],
   duration: number = 3,
-  tier: 'budget' | 'mid' | 'luxury' = 'mid'
+  tier: 'budget' | 'mid' | 'luxury' = 'mid',
+  currency: Currency = 'USD'
 ): TravelCosts => {
   // Get base costs for the selected tier
   const baseTierCosts = baseCosts[tier];
@@ -105,25 +118,20 @@ export const calculateTripCosts = (
     min: (accommodation.min + food.min + activities.min + transportation.min) * duration,
     max: (accommodation.max + food.max + activities.max + transportation.max) * duration
   };
+
+  // Apply currency conversion if necessary
+  const convertedAccommodation = convertCurrency(accommodation, currency, duration);
+  const convertedFood = convertCurrency(food, currency, duration);
+  const convertedActivities = convertCurrency(activities, currency, duration);
+  const convertedTransportation = convertCurrency(transportation, currency, duration);
+  const convertedTotal = convertCurrency(total, currency);
   
   return {
-    accommodation: {
-      min: accommodation.min * duration,
-      max: accommodation.max * duration
-    },
-    food: {
-      min: food.min * duration,
-      max: food.max * duration
-    },
-    activities: {
-      min: activities.min * duration,
-      max: activities.max * duration
-    },
-    transportation: {
-      min: transportation.min * duration,
-      max: transportation.max * duration
-    },
-    total
+    accommodation: convertedAccommodation,
+    food: convertedFood,
+    activities: convertedActivities,
+    transportation: convertedTransportation,
+    total: convertedTotal
   };
 };
 
@@ -135,16 +143,36 @@ function adjustCost(baseCost: CostRange, destinationMultiplier: number, interest
   };
 }
 
+// Helper function to convert currency
+function convertCurrency(cost: CostRange, currency: Currency, duration: number = 1): CostRange {
+  if (currency === 'USD') return cost;
+  
+  const rate = currencyRates[currency];
+  return {
+    min: Math.round(cost.min * rate),
+    max: Math.round(cost.max * rate)
+  };
+}
+
 // Format cost as currency
-export const formatCurrency = (value: number): string => {
-  return new Intl.NumberFormat('en-US', {
+export const formatCurrency = (value: number, currency: Currency = 'USD'): string => {
+  const currencyOptions: Record<Currency, { locale: string, currency: string }> = {
+    USD: { locale: 'en-US', currency: 'USD' },
+    INR: { locale: 'en-IN', currency: 'INR' },
+    EUR: { locale: 'de-DE', currency: 'EUR' },
+    GBP: { locale: 'en-GB', currency: 'GBP' }
+  };
+  
+  const { locale, currency: currencyCode } = currencyOptions[currency];
+  
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: 'USD',
+    currency: currencyCode,
     maximumFractionDigits: 0
   }).format(value);
 };
 
 // Format a cost range
-export const formatCostRange = (range: CostRange): string => {
-  return `${formatCurrency(range.min)} - ${formatCurrency(range.max)}`;
+export const formatCostRange = (range: CostRange, currency: Currency = 'USD'): string => {
+  return `${formatCurrency(range.min, currency)} - ${formatCurrency(range.max, currency)}`;
 };

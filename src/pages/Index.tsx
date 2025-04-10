@@ -8,18 +8,23 @@ import SearchForm from "@/components/SearchForm";
 import ItineraryDisplay from "@/components/ItineraryDisplay";
 import LocalEvents from "@/components/LocalEvents";
 import DestinationRecommender from "@/components/DestinationRecommender";
+import AttractionsDisplay from "@/components/AttractionsDisplay";
+import WeatherDisplay from "@/components/WeatherDisplay";
 import { destinations } from "@/data/destinations";
 import { interests } from "@/data/interests";
 import { generateItinerary, Itinerary } from "@/data/itineraries";
-import { calculateTripCosts, TravelCosts } from "@/utils/costEstimator";
+import { calculateTripCosts, TravelCosts, Currency } from "@/utils/costEstimator";
 
 const Index = () => {
   const [selectedDestination, setSelectedDestination] = useState<typeof destinations[0] | null>(null);
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [generatedItinerary, setGeneratedItinerary] = useState<Itinerary | null>(null);
   const [showEvents, setShowEvents] = useState(false);
+  const [showAttractions, setShowAttractions] = useState(false);
+  const [showWeather, setShowWeather] = useState(false);
   const [tripDuration, setTripDuration] = useState(3);
   const [tripCosts, setTripCosts] = useState<TravelCosts | null>(null);
+  const [currency, setCurrency] = useState<Currency>('INR');
 
   const handleDestinationSelect = (destination: typeof destinations[0]) => {
     setSelectedDestination(destination);
@@ -43,13 +48,17 @@ const Index = () => {
     setTripDuration(duration);
     
     // Generate the cost estimate
-    const costs = calculateTripCosts(destinationId, interestIds, duration);
+    const costs = calculateTripCosts(destinationId, interestIds, duration, 'mid', currency);
     setTripCosts(costs);
     
     // Generate the itinerary
     const itinerary = generateItinerary(destinationId, interestIds, duration);
     setGeneratedItinerary(itinerary);
+    
+    // Reset view states
     setShowEvents(false);
+    setShowAttractions(false);
+    setShowWeather(false);
     
     // Scroll to results
     setTimeout(() => {
@@ -62,6 +71,8 @@ const Index = () => {
 
   const handleViewEvents = () => {
     setShowEvents(true);
+    setShowAttractions(false);
+    setShowWeather(false);
     // Scroll to events section
     setTimeout(() => {
       const eventsSection = document.getElementById("events");
@@ -71,7 +82,59 @@ const Index = () => {
     }, 100);
   };
 
+  const handleViewAttractions = () => {
+    setShowAttractions(true);
+    setShowEvents(false);
+    setShowWeather(false);
+    // Scroll to attractions section
+    setTimeout(() => {
+      const attractionsSection = document.getElementById("attractions");
+      if (attractionsSection) {
+        attractionsSection.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 100);
+  };
+
+  const handleViewWeather = () => {
+    setShowWeather(true);
+    setShowEvents(false);
+    setShowAttractions(false);
+    // Scroll to weather section
+    setTimeout(() => {
+      const weatherSection = document.getElementById("weather");
+      if (weatherSection) {
+        weatherSection.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 100);
+  };
+
+  const handleCurrencyChange = (newCurrency: Currency) => {
+    setCurrency(newCurrency);
+    
+    // Recalculate costs when currency changes
+    if (selectedDestination && tripCosts) {
+      const costs = calculateTripCosts(
+        selectedDestination.id, 
+        selectedInterests, 
+        tripDuration, 
+        'mid',
+        newCurrency
+      );
+      setTripCosts(costs);
+    }
+  };
+
   const popularDestinations = destinations.filter(d => d.popular);
+
+  const getDestinationName = () => {
+    if (!generatedItinerary) return "";
+    return destinations.find(d => d.id === generatedItinerary.destinationId)?.name || "";
+  };
+
+  const getDestinationCountry = () => {
+    if (!generatedItinerary) return "";
+    return destinations.find(d => d.id === generatedItinerary.destinationId)?.country || "";
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -203,13 +266,90 @@ const Index = () => {
           <div className="container mx-auto px-4">
             <ItineraryDisplay 
               itinerary={generatedItinerary} 
-              destinationName={
-                destinations.find(d => d.id === generatedItinerary.destinationId)?.name || ""
-              }
+              destinationName={getDestinationName()}
               onViewLocalEvents={handleViewEvents}
               travelCosts={tripCosts || undefined}
               duration={tripDuration}
             />
+            
+            <div className="flex flex-wrap gap-2 justify-center mt-6">
+              <Button
+                variant="outline"
+                className="border-travel-teal text-travel-teal hover:bg-travel-teal hover:text-white"
+                onClick={handleViewAttractions}
+              >
+                View Attractions
+              </Button>
+              
+              <Button
+                variant="outline"
+                className="border-sky-500 text-sky-500 hover:bg-sky-500 hover:text-white"
+                onClick={handleViewWeather}
+              >
+                Check Weather
+              </Button>
+              
+              <Button
+                variant="outline"
+                className="border-travel-coral text-travel-coral hover:bg-travel-coral hover:text-white"
+                onClick={handleViewEvents}
+              >
+                Local Events
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Weather Section */}
+      {showWeather && generatedItinerary && (
+        <section id="weather" className="py-16">
+          <div className="container mx-auto px-4">
+            <WeatherDisplay 
+              destinationName={getDestinationName()}
+              country={getDestinationCountry()}
+            />
+            <div className="mt-6 text-center">
+              <Button
+                variant="outline"
+                className="border-travel-blue text-travel-blue hover:bg-travel-blue hover:text-white"
+                onClick={() => {
+                  setShowWeather(false);
+                  const resultsSection = document.getElementById("results");
+                  if (resultsSection) {
+                    resultsSection.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
+              >
+                Back to Itinerary
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Attractions Section */}
+      {showAttractions && generatedItinerary && (
+        <section id="attractions" className="py-16">
+          <div className="container mx-auto px-4">
+            <AttractionsDisplay 
+              destinationName={getDestinationName()}
+            />
+            <div className="mt-6 text-center">
+              <Button
+                variant="outline"
+                className="border-travel-blue text-travel-blue hover:bg-travel-blue hover:text-white"
+                onClick={() => {
+                  setShowAttractions(false);
+                  const resultsSection = document.getElementById("results");
+                  if (resultsSection) {
+                    resultsSection.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
+              >
+                Back to Itinerary
+              </Button>
+            </div>
           </div>
         </section>
       )}
@@ -219,9 +359,7 @@ const Index = () => {
         <section id="events" className="py-16">
           <div className="container mx-auto px-4">
             <LocalEvents 
-              destinationName={
-                destinations.find(d => d.id === generatedItinerary.destinationId)?.name || ""
-              }
+              destinationName={getDestinationName()}
             />
             <div className="mt-6 text-center">
               <Button
