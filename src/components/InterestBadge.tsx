@@ -2,6 +2,7 @@
 import React from "react";
 import { Interest } from "@/data/interests";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 interface InterestBadgeProps {
   interest: Interest;
@@ -19,13 +20,17 @@ const InterestBadge: React.FC<InterestBadgeProps> = ({
   };
 
   return (
-    <div className={cn(
-      "bg-travel-coral bg-opacity-10 text-travel-coral inline-flex items-center font-medium",
-      sizeClasses[size]
-    )}>
+    <Badge
+      variant="outline"
+      className={cn(
+        "bg-travel-coral bg-opacity-10 text-travel-coral hover:bg-travel-coral hover:text-white transition-colors",
+        "inline-flex items-center font-medium cursor-pointer",
+        sizeClasses[size]
+      )}
+    >
       <span className="mr-1">{interest.icon}</span>
       <span>{interest.name}</span>
-    </div>
+    </Badge>
   );
 };
 

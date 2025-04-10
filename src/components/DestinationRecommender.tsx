@@ -3,6 +3,7 @@ import React from "react";
 import { Destination } from "@/data/destinations";
 import { Interest } from "@/data/interests";
 import DestinationCard from "@/components/DestinationCard";
+import { Badge } from "@/components/ui/badge";
 
 interface DestinationRecommenderProps {
   destinations: Destination[];
@@ -72,11 +73,17 @@ const DestinationRecommender: React.FC<DestinationRecommenderProps> = ({
       </h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {recommendedDestinations.map((destination) => (
-          <DestinationCard
-            key={destination.id}
-            destination={destination}
-            onClick={onSelectDestination}
-          />
+          <div key={destination.id} className="relative">
+            <div className="absolute top-2 right-2 z-10">
+              <Badge className="bg-travel-coral text-white">
+                {destination.matchingInterestsCount} matching {destination.matchingInterestsCount === 1 ? 'interest' : 'interests'}
+              </Badge>
+            </div>
+            <DestinationCard
+              destination={destination}
+              onClick={onSelectDestination}
+            />
+          </div>
         ))}
       </div>
     </div>

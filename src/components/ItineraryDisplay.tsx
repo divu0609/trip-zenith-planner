@@ -6,6 +6,8 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Itinerary, ItineraryDay } from "@/data/itineraries";
 import { toast } from "sonner";
+import { Clock, Calendar, MapPin, Link as LinkIcon, Info } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface ItineraryDisplayProps {
   itinerary: Itinerary | null;
@@ -34,51 +36,109 @@ const ItineraryDisplay: React.FC<ItineraryDisplayProps> = ({
     });
   };
 
+  const handleBookNow = (activityTitle: string) => {
+    toast.success(`Redirecting to booking page for ${activityTitle}`, {
+      description: "You'll be redirected to the booking site in a moment.",
+    });
+  };
+
   const renderDay = (day: ItineraryDay) => {
     return (
       <div className="space-y-6 py-2">
-        {day.activities.map((activity) => (
-          <div key={activity.id} className="bg-white rounded-lg overflow-hidden shadow">
-            <div className="flex flex-col md:flex-row">
-              {activity.imageUrl && (
-                <div className="md:w-1/3">
-                  <img
-                    src={activity.imageUrl}
-                    alt={activity.title}
-                    className="h-48 w-full object-cover"
-                  />
-                </div>
-              )}
-              <div className={`p-4 md:p-6 ${activity.imageUrl ? 'md:w-2/3' : 'w-full'}`}>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-bold text-lg">{activity.title}</h3>
-                    <p className="text-gray-500 text-sm">{activity.location}</p>
+        {day.activities.map((activity, index, array) => (
+          <div key={activity.id} className="space-y-4">
+            <div className="bg-white rounded-lg overflow-hidden shadow">
+              <div className="flex flex-col md:flex-row">
+                {activity.imageUrl && (
+                  <div className="md:w-1/3">
+                    <img
+                      src={activity.imageUrl}
+                      alt={activity.title}
+                      className="h-48 w-full object-cover"
+                    />
                   </div>
-                  <span className="bg-travel-teal text-white text-xs px-2 py-1 rounded">
-                    {activity.time}
-                  </span>
+                )}
+                <div className={`p-4 md:p-6 ${activity.imageUrl ? 'md:w-2/3' : 'w-full'}`}>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-bold text-lg">{activity.title}</h3>
+                      <div className="flex items-center text-gray-500 text-sm mt-1">
+                        <MapPin size={14} className="mr-1" />
+                        <p>{activity.location}</p>
+                      </div>
+                    </div>
+                    <Badge className="bg-travel-teal text-white">
+                      <Clock size={14} className="mr-1" />
+                      {activity.time}
+                    </Badge>
+                  </div>
+                  <p className="text-gray-700 mt-2">{activity.description}</p>
+                  
+                  <div className="mt-4 flex flex-wrap items-center gap-4">
+                    {/* Duration display */}
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Clock size={14} className="mr-1" />
+                      <span>Duration: {activity.duration || '2 hours'}</span>
+                    </div>
+                    
+                    {/* Optional booking link */}
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="border-travel-blue text-travel-blue hover:bg-travel-blue hover:text-white"
+                      onClick={() => handleBookNow(activity.title)}
+                    >
+                      <LinkIcon size={14} className="mr-1" />
+                      Book Now
+                    </Button>
+                  </div>
                 </div>
-                <p className="text-gray-700 mt-2">{activity.description}</p>
               </div>
             </div>
+            
+            {/* Travel time to next activity if not the last activity */}
+            {index < array.length - 1 && (
+              <div className="flex items-center justify-center py-2 px-4 bg-gray-50 rounded-md">
+                <Info size={14} className="text-travel-blue mr-2" />
+                <span className="text-sm text-gray-600">
+                  Travel time to next activity: {getTravelTime(activity, array[index + 1])}
+                </span>
+              </div>
+            )}
           </div>
         ))}
       </div>
     );
   };
 
+  // Helper function to simulate travel time between activities
+  const getTravelTime = (fromActivity: any, toActivity: any) => {
+    // In a real app, this would calculate based on actual coordinates
+    // For demo purposes, we'll return a random time between 10-40 minutes
+    const minutes = Math.floor(Math.random() * 30) + 10;
+    return `${minutes} minutes`;
+  };
+
   return (
     <Card className="w-full mt-8">
       <CardHeader className="bg-travel-navy text-white">
-        <CardTitle className="text-2xl">
-          Your {itinerary.days.length}-Day Itinerary for {destinationName}
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-2xl">
+            Your {itinerary.days.length}-Day Itinerary for {destinationName}
+          </CardTitle>
+          <div className="text-sm flex items-center">
+            <Calendar size={14} className="mr-1" />
+            Created on {new Date().toLocaleDateString()}
+          </div>
+        </div>
       </CardHeader>
       <CardContent className="p-6">
         <div className="flex justify-between items-center mb-6">
-          <div className="text-gray-700">
-            Created on {new Date().toLocaleDateString()}
+          <div className="space-x-2">
+            <Badge className="bg-travel-blue">Daily Schedule</Badge>
+            <Badge variant="outline" className="text-travel-teal border-travel-teal">
+              {itinerary.activities?.length || itinerary.days.reduce((acc, day) => acc + day.activities.length, 0)} Activities
+            </Badge>
           </div>
           <div className="space-x-2">
             <Button
