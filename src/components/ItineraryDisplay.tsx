@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -5,17 +6,19 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Itinerary, ItineraryDay } from "@/data/itineraries";
 import { toast } from "sonner";
-import { Clock, Calendar, MapPin, Link as LinkIcon, Info } from "lucide-react";
+import { Clock, Calendar, MapPin, Link as LinkIcon, Info, Ticket } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface ItineraryDisplayProps {
   itinerary: Itinerary | null;
   destinationName: string;
+  onViewLocalEvents?: () => void;
 }
 
 const ItineraryDisplay: React.FC<ItineraryDisplayProps> = ({
   itinerary,
   destinationName,
+  onViewLocalEvents,
 }) => {
   const [activeDay, setActiveDay] = useState("1");
 
@@ -149,6 +152,24 @@ const ItineraryDisplay: React.FC<ItineraryDisplayProps> = ({
             </Button>
           </div>
         </div>
+        
+        {onViewLocalEvents && (
+          <div className="mb-6 p-4 bg-travel-coral bg-opacity-10 rounded-lg flex items-center justify-between">
+            <div className="flex items-center">
+              <Ticket className="text-travel-coral mr-2" size={20} />
+              <p className="text-gray-700">
+                Looking for local events during your stay in {destinationName}?
+              </p>
+            </div>
+            <Button 
+              onClick={onViewLocalEvents}
+              className="bg-travel-coral hover:bg-travel-navy text-white"
+              size="sm"
+            >
+              View Events
+            </Button>
+          </div>
+        )}
         
         <Separator className="my-4" />
         

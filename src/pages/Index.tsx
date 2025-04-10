@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import DestinationCard from "@/components/DestinationCard";
 import SearchForm from "@/components/SearchForm";
 import ItineraryDisplay from "@/components/ItineraryDisplay";
+import LocalEvents from "@/components/LocalEvents";
 import DestinationRecommender from "@/components/DestinationRecommender";
 import { destinations } from "@/data/destinations";
 import { interests } from "@/data/interests";
@@ -15,6 +16,7 @@ const Index = () => {
   const [selectedDestination, setSelectedDestination] = useState<typeof destinations[0] | null>(null);
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [generatedItinerary, setGeneratedItinerary] = useState<Itinerary | null>(null);
+  const [showEvents, setShowEvents] = useState(false);
 
   const handleDestinationSelect = (destination: typeof destinations[0]) => {
     setSelectedDestination(destination);
@@ -37,12 +39,24 @@ const Index = () => {
     // Generate the itinerary
     const itinerary = generateItinerary(destinationId, interestIds, duration);
     setGeneratedItinerary(itinerary);
+    setShowEvents(false);
     
     // Scroll to results
     setTimeout(() => {
       const resultsSection = document.getElementById("results");
       if (resultsSection) {
         resultsSection.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 100);
+  };
+
+  const handleViewEvents = () => {
+    setShowEvents(true);
+    // Scroll to events section
+    setTimeout(() => {
+      const eventsSection = document.getElementById("events");
+      if (eventsSection) {
+        eventsSection.scrollIntoView({ behavior: "smooth" });
       }
     }, 100);
   };
@@ -182,7 +196,36 @@ const Index = () => {
               destinationName={
                 destinations.find(d => d.id === generatedItinerary.destinationId)?.name || ""
               }
+              onViewLocalEvents={handleViewEvents}
             />
+          </div>
+        </section>
+      )}
+
+      {/* Events Section */}
+      {showEvents && generatedItinerary && (
+        <section id="events" className="py-16">
+          <div className="container mx-auto px-4">
+            <LocalEvents 
+              destinationName={
+                destinations.find(d => d.id === generatedItinerary.destinationId)?.name || ""
+              }
+            />
+            <div className="mt-6 text-center">
+              <Button
+                variant="outline"
+                className="border-travel-blue text-travel-blue hover:bg-travel-blue hover:text-white"
+                onClick={() => {
+                  setShowEvents(false);
+                  const resultsSection = document.getElementById("results");
+                  if (resultsSection) {
+                    resultsSection.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
+              >
+                Back to Itinerary
+              </Button>
+            </div>
           </div>
         </section>
       )}
